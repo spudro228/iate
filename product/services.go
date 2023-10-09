@@ -13,8 +13,7 @@ func NewInMemoryProductService() *InMemoryProductService {
 }
 
 func (s *InMemoryProductService) SaveProduct(product Product) error {
-	id := product.ProductName // используем имя продукта в качестве идентификатора
-	s.products[id] = product
+	s.products[product.Guid] = product
 	return nil
 }
 
@@ -40,5 +39,15 @@ func (s *InMemoryProductService) DeleteProduct(id string) error {
 		return fmt.Errorf("Product not found")
 	}
 	delete(s.products, id)
+	return nil
+}
+
+func (s *InMemoryProductService) UpdateProduct(productObj Product) error {
+	_, ok := s.products[productObj.Guid]
+	if !ok {
+		return fmt.Errorf("Product not found")
+	}
+
+	s.products[productObj.Guid] = productObj
 	return nil
 }

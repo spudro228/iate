@@ -10,4 +10,5 @@ type Product struct {
 	Fats          float64   `json:"fats"`
 	Carbohydrates float64   `json:"carbohydrates"`
 	CreatedAt     time.Time `json:"created_at"`
+	Guid          string    `json:"guid"`
 }

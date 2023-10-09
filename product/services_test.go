@@ -47,15 +47,15 @@ func TestGetAllProducts(t *testing.T) {
 
 func TestDeleteProduct(t *testing.T) {
 	service := NewInMemoryProductService()
-	product := Product{ProductName: "Test", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
+	product := Product{Guid: "12345", ProductName: "Test", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
 	service.SaveProduct(product)
 
-	err := service.DeleteProduct("Test")
+	err := service.DeleteProduct("12345")
 	if err != nil {
 		t.Errorf("Error while deleting product: %v", err)
 	}
 
-	_, err = service.GetProduct("Test")
+	_, err = service.GetProduct("12345")
 	if err == nil {
 		t.Errorf("Expected error when getting deleted product, got nil")
 	}
