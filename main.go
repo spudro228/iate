@@ -77,7 +77,7 @@ func productsHandlerGetAll(service *product.InMemoryProductService) http.Handler
 			return
 		}
 
-		products, err := service.GetAllProducts(product.UserId(modelRequest.UserId))
+		products, err := service.GetAllProducts(product.UserId(modelRequest.UserId), modelRequest.Today)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Print(err)
@@ -240,7 +240,7 @@ func main() {
 		http.HandleFunc("/products/update", productHandlerUpdate(productService))
 		http.HandleFunc("/products/getAll", productsHandlerGetAll(productService))
 		http.HandleFunc("/products/delete", productsHandlerDelete(productService))
-		http.HandleFunc("/test", testHandler(client, productService))
+		http.HandleFunc("/test", testHandler())
 		err := http.ListenAndServe(":80", nil)
 		if err != nil {
 			log.Fatal("ListenAndServe: ", err)
