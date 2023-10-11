@@ -185,7 +185,7 @@ func tryToParseAndSaveInfoFromUser(ctx context.Context, openaiClient *openai.Cli
 	}
 
 	if len(products) == 0 {
-		return fmt.Errorf("no products parse")
+		return fmt.Errorf("no products parse") //todo: сделать ответ челу, что тут не найдены продукты
 	}
 
 	timeNow := time.Now()
