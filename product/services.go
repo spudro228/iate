@@ -2,18 +2,28 @@ package product
 
 import "fmt"
 
+type UserId string
+
+type ProductDataModel struct {
+	UserId  UserId
+	Product Product
+}
 type InMemoryProductService struct {
-	products map[string]Product
+	products map[string]ProductDataModel
 }
 
 func NewInMemoryProductService() *InMemoryProductService {
 	return &InMemoryProductService{
-		products: make(map[string]Product),
+		products: map[string]ProductDataModel{},
 	}
 }
 
-func (s *InMemoryProductService) SaveProduct(product Product) error {
-	s.products[product.Guid] = product
+func (s *InMemoryProductService) SaveProduct(product Product, userId UserId) error {
+	if product.Guid == "" {
+		return fmt.Errorf("Empty guid")
+	}
+
+	s.products[product.Guid] = ProductDataModel{UserId: userId, Product: product}
 	return nil
 }
 
@@ -22,13 +32,16 @@ func (s *InMemoryProductService) GetProduct(id string) (*Product, error) {
 	if !ok {
 		return nil, fmt.Errorf("Product not found")
 	}
-	return &product, nil
+	return &product.Product, nil
 }
 
-func (s *InMemoryProductService) GetAllProducts() ([]Product, error) {
+// GetAllProducts todo: add filter "today"
+func (s *InMemoryProductService) GetAllProducts(userId UserId) ([]Product, error) {
 	values := make([]Product, 0, len(s.products))
 	for _, v := range s.products {
-		values = append(values, v)
+		if v.UserId == userId {
+			values = append(values, v.Product)
+		}
 	}
 	return values, nil
 }
@@ -43,11 +56,18 @@ func (s *InMemoryProductService) DeleteProduct(id string) error {
 }
 
 func (s *InMemoryProductService) UpdateProduct(productObj Product) error {
-	_, ok := s.products[productObj.Guid]
+	p, ok := s.products[productObj.Guid]
 	if !ok {
 		return fmt.Errorf("Product not found")
 	}
 
-	s.products[productObj.Guid] = productObj
+	p.Product.ProductName = productObj.ProductName
+	p.Product.Calories = productObj.Calories
+	p.Product.Fats = productObj.Fats
+	p.Product.Carbohydrates = productObj.Carbohydrates
+	p.Product.Proteins = productObj.Proteins
+	p.Product.Weight = productObj.Weight
+
+	s.products[productObj.Guid] = p
 	return nil
 }
