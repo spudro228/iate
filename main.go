@@ -63,7 +63,21 @@ func productHandlerUpdate(service *product.InMemoryProductService) http.HandlerF
 
 func productsHandlerGetAll(service *product.InMemoryProductService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		products, err := service.GetAllProducts()
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var modelRequest models.GetAllProductsForUser
+		err = json.Unmarshal(body, &modelRequest)
+		if err != nil {
+			http.Error(w, "Error decoding JSON", http.StatusBadRequest)
+			return
+		}
+
+		products, err := service.GetAllProducts(product.UserId(modelRequest.UserId))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			log.Print(err)

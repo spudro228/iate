@@ -18,3 +18,8 @@ type UpdateProductById struct {
 	UserId  string             `json:"user_id"`
 	Product ProductUpdateModel `json:"product"`
 }
+
+type GetAllProductsForUser struct {
+	UserId string `json:"user_id"`
+	Today  bool   `json:"today"`
+}
