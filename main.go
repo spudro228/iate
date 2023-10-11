@@ -33,6 +33,7 @@ func testHandler(openaiClient *openai.Client, service *product.InMemoryProductSe
 func productHandlerUpdate(service *product.InMemoryProductService) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 			return
@@ -63,7 +64,7 @@ func productHandlerUpdate(service *product.InMemoryProductService) http.HandlerF
 
 func productsHandlerGetAll(service *product.InMemoryProductService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-
+		enableCors(&w)
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -96,6 +97,7 @@ func productsHandlerGetAll(service *product.InMemoryProductService) http.Handler
 
 func productsHandlerDelete(service *product.InMemoryProductService) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
 		if r.Method != http.MethodPost {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 			return
@@ -199,6 +201,10 @@ func tryToParseAndSaveInfoFromUser(ctx context.Context, openaiClient *openai.Cli
 
 // endregion
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func init() {
 	// loads values from .env into the system
 	if err := godotenv.Load(); err != nil {
@@ -236,7 +242,6 @@ func main() {
 		http.HandleFunc("/products/getAll", productsHandlerGetAll(productService))
 		http.HandleFunc("/products/delete", productsHandlerDelete(productService))
 		http.HandleFunc("/test", testHandler(client, productService))
-
 		err := http.ListenAndServe(":8080", nil)
 		if err != nil {
 			log.Fatal("ListenAndServe: ", err)
