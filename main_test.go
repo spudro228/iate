@@ -18,7 +18,7 @@ func TestProductsHandlerGetAll(t *testing.T) {
 	data := []byte(`
 		{
 			"user_id": "u0001",
-			"today": true
+			"today": false
 		}
 	`)
 
