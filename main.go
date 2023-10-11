@@ -241,10 +241,20 @@ func main() {
 		http.HandleFunc("/products/getAll", productsHandlerGetAll(productService))
 		http.HandleFunc("/products/delete", productsHandlerDelete(productService))
 		http.HandleFunc("/test", testHandler())
-		err := http.ListenAndServe(":80", nil)
-		if err != nil {
-			log.Fatal("ListenAndServe: ", err)
-			return err
+
+		srv := &http.Server{Addr: ":8081"}
+
+		go func() {
+			log.Print("Server http start")
+			err := srv.ListenAndServe()
+			if err != nil {
+				log.Fatal("ListenAndServe: ", err)
+			}
+		}()
+
+		<-ctx.Done()
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Fatalf("Server shutdown failed: %v\n", err)
 		}
 
 		return nil
