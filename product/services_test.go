@@ -66,3 +66,39 @@ func TestDeleteProduct(t *testing.T) {
 		return
 	}
 }
+
+func TestUpdateProduct(t *testing.T) {
+	service := NewInMemoryProductService()
+	product1 := Product{Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
+	product2 := Product{Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
+	service.SaveProduct(product1, "u001")
+	service.SaveProduct(product2, "u001")
+
+	updateTo := Product{Guid: "g12312-0", ProductName: "TestUpdated", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
+
+	service.UpdateProduct(updateTo)
+
+	products, err := service.GetAllProducts("u001")
+	if err != nil {
+		t.Errorf("Error while getting all products: %v", err)
+		return
+	}
+
+	if len(products) != 2 {
+		t.Errorf("Expected 2 products, got %v", len(products))
+		return
+	}
+
+	for _, product := range products {
+		if product.Guid == "g12312-0" {
+			if product.ProductName != "TestUpdated" {
+				t.Errorf("Error product name not updated: %s", "g12312-0")
+				return
+			}
+			return
+		} else {
+			t.Errorf("Error while find product: %s", "g12312-0")
+			return
+		}
+	}
+}
