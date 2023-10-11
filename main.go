@@ -24,14 +24,13 @@ import (
 )
 
 // region http_handlers
-func testHandler(openaiClient *openai.Client, service *product.InMemoryProductService) http.HandlerFunc {
+func testHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 		w.WriteHeader(http.StatusOK)
 	}
 }
 func productHandlerUpdate(service *product.InMemoryProductService) http.HandlerFunc {
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		enableCors(&w)
 		if r.Method != http.MethodPost {
