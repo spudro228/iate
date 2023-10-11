@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  api:
+    container_name: iate
+    build:
+      context: ./
+    command:
+      - /iate
+    ports:
+      - "80:80"
