@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/SevereCloud/vksdk/v2/api"
 	"github.com/SevereCloud/vksdk/v2/api/params"
 	"github.com/SevereCloud/vksdk/v2/events"
@@ -174,13 +175,17 @@ func tryToParseAndSaveInfoFromUser(ctx context.Context, openaiClient *openai.Cli
 
 	if err != nil {
 		log.Printf("ChatCompletion error: %v\n", err)
-		return nil //todo: отвечать реплаем что не сохранил сообщение
+		return fmt.Errorf("ChatCompletion error: %v\n", err) //todo: отвечать реплаем что не сохранил сообщение
 	}
 
 	var products []product.Product
 	err = json.Unmarshal([]byte(content), &products)
 	if err != nil {
 		return err
+	}
+
+	if len(products) == 0 {
+		return fmt.Errorf("no products parse")
 	}
 
 	timeNow := time.Now()
@@ -190,6 +195,8 @@ func tryToParseAndSaveInfoFromUser(ctx context.Context, openaiClient *openai.Cli
 		err = service.SaveProduct(productObj, product.UserId(userId))
 		if err != nil {
 			log.Printf("Can't save productObj %+v\n", productObj)
+			return fmt.Errorf("Can't save productObj %+v\n", productObj)
+
 		} else {
 			log.Printf("Save productObj %+v\n", productObj)
 		}
