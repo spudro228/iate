@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 )
 
@@ -110,7 +111,7 @@ func productsHandlerDelete(service *product.InMemoryProductService) func(http.Re
 //endregion
 
 // region bot_handler
-func botMessageGlobalHandler(vk *api.VK, handlerCallback func(string) error) func(context.Context, events.MessageNewObject) {
+func botMessageGlobalHandler(vk *api.VK, handlerCallback func(string, string) error) func(context.Context, events.MessageNewObject) {
 	return func(ctx context.Context, object events.MessageNewObject) {
 		msgText := object.Message.Text
 		log.Print(msgText)
@@ -130,7 +131,7 @@ func botMessageGlobalHandler(vk *api.VK, handlerCallback func(string) error) fun
 			return
 		}
 
-		err := handlerCallback(msgText)
+		err := handlerCallback(msgText, strconv.Itoa(object.Message.PeerID))
 		var responseMsgTxt string
 		if err != nil {
 			responseMsgTxt = "Что-то не получилось, попробуйте еще раз позже или измените запрос."
@@ -152,11 +153,7 @@ func botMessageGlobalHandler(vk *api.VK, handlerCallback func(string) error) fun
 //endregion
 
 // region ai_interceptor
-func tryToParseAndSaveInfoFromUser(
-	ctx context.Context,
-	openaiClient *openai.Client,
-	service *product.InMemoryProductService,
-	request string) error {
+func tryToParseAndSaveInfoFromUser(ctx context.Context, openaiClient *openai.Client, service *product.InMemoryProductService, request string, userId string) error {
 	//Я съел 1000 грамм риса с 100 граммами кабачков и 300 грамм куриной грудки.
 	content, err := ai.Send(ctx, openaiClient, request)
 
@@ -175,7 +172,7 @@ func tryToParseAndSaveInfoFromUser(
 	for _, productObj := range products {
 		productObj.Guid = uuid.NewString()
 		productObj.CreatedAt = timeNow
-		err = service.SaveProduct(productObj)
+		err = service.SaveProduct(productObj, product.UserId(userId))
 		if err != nil {
 			log.Printf("Can't save productObj %+v\n", productObj)
 		} else {
@@ -250,12 +247,13 @@ func main() {
 		lp.MessageNew(
 			botMessageGlobalHandler(
 				vk,
-				func(msg string) error {
+				func(msg string, userId string) error {
 					return tryToParseAndSaveInfoFromUser(
 						ctx,
 						client,
 						productService,
 						msg,
+						userId,
 					)
 				},
 			),
