@@ -1,6 +1,9 @@
 package product
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type UserId string
 
@@ -36,14 +39,30 @@ func (s *InMemoryProductService) GetProduct(id string) (*Product, error) {
 }
 
 // GetAllProducts todo: add filter "today"
-func (s *InMemoryProductService) GetAllProducts(userId UserId) ([]Product, error) {
+func (s *InMemoryProductService) GetAllProducts(userId UserId, today bool) ([]Product, error) {
 	values := make([]Product, 0, len(s.products))
 	for _, v := range s.products {
 		if v.UserId == userId {
 			values = append(values, v.Product)
 		}
 	}
+
+	if today {
+		todayProducts := make([]Product, 0, len(values))
+		for _, value := range values {
+			if isSameDay(value.CreatedAt, time.Now()) {
+				todayProducts = append(todayProducts, value)
+			}
+		}
+
+		return todayProducts, nil
+	}
+
 	return values, nil
+}
+
+func isSameDay(t1, t2 time.Time) bool {
+	return t1.Year() == t2.Year() && t1.Month() == t2.Month() && t1.Day() == t2.Day()
 }
 
 func (s *InMemoryProductService) DeleteProduct(id string) error {
