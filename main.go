@@ -226,6 +226,13 @@ func main() {
 		return
 	}
 
+	port, existsPort := os.LookupEnv("PORT")
+
+	if !existsPort {
+		log.Print("PORT empty. Exit.")
+		return
+	}
+
 	ctxBackground := context.Background()
 	//грасефул шатдаунт не работает, используй сигкилл
 	ctx, stop := signal.NotifyContext(ctxBackground, os.Interrupt, os.Kill)
@@ -242,10 +249,10 @@ func main() {
 		http.HandleFunc("/products/delete", productsHandlerDelete(productService))
 		http.HandleFunc("/test", testHandler())
 
-		srv := &http.Server{Addr: ":8081"}
+		srv := &http.Server{Addr: ":" + port}
 
 		go func() {
-			log.Print("Server http start")
+			log.Print("Server http start on " + ":" + port)
 			err := srv.ListenAndServe()
 			if err != nil {
 				log.Fatal("ListenAndServe: ", err)
