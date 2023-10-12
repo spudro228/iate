@@ -13,8 +13,8 @@ func TestProductsHandlerGetAll(t *testing.T) {
 	service := product.NewInMemoryProductService()
 	createdAt, _ := time.Parse(time.RFC3339, "2023-01-01T00:00:12.842427065Z")
 	createdAtCustom := product.CustomDate{Time: createdAt}
-	product := product.Product{Guid: "122345", ProductName: "Test", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3, CreatedAt: createdAtCustom}
-	service.SaveProduct(product, "u0001")
+	productObj := product.Product{Guid: "122345", ProductName: "Test", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3, CreatedAt: createdAtCustom}
+	service.SaveProduct(productObj, "u0001")
 
 	data := []byte(`
 		{
