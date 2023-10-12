@@ -11,8 +11,9 @@ import (
 
 func TestProductsHandlerGetAll(t *testing.T) {
 	service := product.NewInMemoryProductService()
-	createdAt, _ := time.Parse(time.RFC3339, "2022-01-01T00:00:00Z")
-	product := product.Product{Guid: "122345", ProductName: "Test", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3, CreatedAt: createdAt}
+	createdAt, _ := time.Parse(time.RFC3339, "2023-01-01T00:00:12.842427065Z")
+	createdAtCustom := product.CustomDate{Time: createdAt}
+	product := product.Product{Guid: "122345", ProductName: "Test", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3, CreatedAt: createdAtCustom}
 	service.SaveProduct(product, "u0001")
 
 	data := []byte(`
@@ -37,7 +38,7 @@ func TestProductsHandlerGetAll(t *testing.T) {
 	}
 
 	r := rr.Body.String()
-	expected := `[{"product_name":"Test","weight":100,"calories":200,"proteins":1.1,"fats":2.2,"carbohydrates":3.3,"created_at":"2022-01-01T00:00:00Z","guid":"122345"}]
+	expected := `[{"product_name":"Test","weight":100,"calories":200,"proteins":1.1,"fats":2.2,"carbohydrates":3.3,"created_at":"2023-01-01T00:00:12Z","guid":"122345"}]
 `
 	if r != expected {
 		t.Errorf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected)

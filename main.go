@@ -191,7 +191,7 @@ func tryToParseAndSaveInfoFromUser(ctx context.Context, openaiClient *openai.Cli
 	timeNow := time.Now()
 	for _, productObj := range products {
 		productObj.Guid = uuid.NewString()
-		productObj.CreatedAt = timeNow
+		productObj.CreatedAt.Time = timeNow
 		err = service.SaveProduct(productObj, product.UserId(userId))
 		if err != nil {
 			log.Printf("Can't save productObj %+v\n", productObj)

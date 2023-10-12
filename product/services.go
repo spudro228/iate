@@ -50,7 +50,7 @@ func (s *InMemoryProductService) GetAllProducts(userId UserId, today bool) ([]Pr
 	if today {
 		todayProducts := make([]Product, 0, len(values))
 		for _, value := range values {
-			if isSameDay(value.CreatedAt, time.Now()) {
+			if isSameDay(value.CreatedAt.Time, time.Now()) {
 				todayProducts = append(todayProducts, value)
 			}
 		}
