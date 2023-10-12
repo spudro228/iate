@@ -33,8 +33,8 @@ func TestGetProduct(t *testing.T) {
 
 func TestGetAllProducts(t *testing.T) {
 	service := NewInMemoryProductService()
-	product1 := Product{Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
-	product2 := Product{Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
+	product1 := Product{CreatedAt: CustomDate{time.Now()}, Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
+	product2 := Product{CreatedAt: CustomDate{time.Now()}, Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
 	service.SaveProduct(product1, "u001")
 	service.SaveProduct(product2, "u001")
 
@@ -54,8 +54,8 @@ func TestGetAllProductsToday(t *testing.T) {
 	service := NewInMemoryProductService()
 	createdAt, _ := time.Parse(time.RFC3339, "2022-01-01T00:00:00Z")
 
-	product1 := Product{CreatedAt: time.Now(), Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
-	product2 := Product{CreatedAt: createdAt, Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
+	product1 := Product{CreatedAt: CustomDate{time.Now()}, Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
+	product2 := Product{CreatedAt: CustomDate{createdAt}, Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
 	service.SaveProduct(product1, "u001")
 	service.SaveProduct(product2, "u001")
 
@@ -91,8 +91,8 @@ func TestDeleteProduct(t *testing.T) {
 
 func TestUpdateProduct(t *testing.T) {
 	service := NewInMemoryProductService()
-	product1 := Product{Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
-	product2 := Product{Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
+	product1 := Product{CreatedAt: CustomDate{time.Now()}, Guid: "g12312-0", ProductName: "Test1", Weight: 100, Calories: 200, Proteins: 1.1, Fats: 2.2, Carbohydrates: 3.3}
+	product2 := Product{CreatedAt: CustomDate{time.Now()}, Guid: "g12312-1", ProductName: "Test2", Weight: 200, Calories: 300, Proteins: 2.2, Fats: 3.3, Carbohydrates: 4.4}
 	service.SaveProduct(product1, "u001")
 	service.SaveProduct(product2, "u001")
 
